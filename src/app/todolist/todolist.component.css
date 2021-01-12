@@ -1,0 +1,55 @@
+.todocard{
+    width: 18rem;
+    background-color: yellow;
+    overflow: hidden;
+    margin: 10px;
+    display: inline-block;
+    font-family: sans-serif;
+}
+.todocard-title{
+    width: 18rem;
+    background-color: rgb(234, 238, 2);
+    margin-top: 0px;
+}
+
+.todocard-title > p {
+    margin: 0px;
+    font-weight: bolder;
+}
+
+.todo-title{
+    font-size: 1.2rem;
+}
+
+.todocard-foot{
+    margin-top: 20px;
+    font-size: 1.2rem;
+}
+.todo-close{
+    text-align: right;
+    padding: 5px;
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: black 1px 2px;
+}
+
+.icon-close{
+    border: 1px solid red;
+    border-radius: 20px;
+    background: red;
+    box-shadow: rgba(128, 128, 128, 0.472) 1px 3px;
+}
+
+.icon-close:hover{
+    filter: invert();
+}
+
+input[type=checkbox]{
+    width: 15px;
+    height: 15px;
+}
+
+.checkbox-status{
+    margin: 3px 3px 3px 3px;
+}
+

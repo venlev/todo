@@ -1,0 +1,30 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 100% !important;
+    height: 100% !important;
+    background-image: url('./assets/main-bkg.jpg');
+    background-size: cover;
+    background-position: fixed;
+    background-repeat: no-repeat;
+    user-select: none;
+}
+
+/*   SCROLLBAR    */
+
+::-webkit-scrollbar{
+    width:20px;
+}
+
+::-webkit-scrollbar-thumb{
+    background: rgba(0, 255, 255, 0.548);
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background: aqua;
+}
+
+/* SCROLLBAR END */
+
