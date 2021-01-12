@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CRUDService } from '../services/crud.service';
 
 @Component({
   selector: 'app-todolist',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TodolistComponent implements OnInit {
 
-  constructor() { }
+  constructor(private CRUD: CRUDService) { }
 
   ngOnInit(): void {
+    
   }
 
 }

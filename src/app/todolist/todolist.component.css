@@ -53,3 +53,20 @@ input[type=checkbox]{
     margin: 3px 3px 3px 3px;
 }
 
+.element-adder{
+    width: 100%;
+}
+
+.add-control-panel{
+    background-color: black;
+    width: 30%;
+    padding: 10px;
+    font-family: sans-serif;
+    color: white;
+    font-size: 1.3rem;
+    display: block;
+}
+
+input[type=text]{
+    font-size: 1.2rem;
+}
