@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CRUDService } from '../services/crud.service';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-todolist',
@@ -7,21 +8,26 @@ import { CRUDService } from '../services/crud.service';
   styleUrls: ['./todolist.component.css']
 })
 export class TodolistComponent implements OnInit {
-  mockobject = {
-    "Első bejegyzés":{
-      isDone: true
-    },
-    "Második bejegyzés":{
-      isDone: false
-    },
-  }
+  
+  createForm = this.formBuilder.group({
+    title: ''
+  });
 
   allEntries;
 
-  constructor(private CRUD: CRUDService) { }
+  constructor(private CRUD: CRUDService, private formBuilder: FormBuilder) {
+
+  }
 
   ngOnInit(): void {
-    this.allEntries = this.mockobject;
+    //this.allEntries = this.mockobject;
+    this.allEntries = this.CRUD.read() !== 'empty' ? this.CRUD.read() : {}
+
+  }
+
+  onSubmit(): void {
+    this.createForm.reset();
   }
 
 }
+
