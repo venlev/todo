@@ -5,24 +5,26 @@ import { Injectable } from '@angular/core';
 })
 
 export class CRUDService {
-    create(value: string) {
 
+    create(value: string) {
+        // create an entry such like
+        // "bejegyzés": {}
     }
 
     read() {
 
     }
 
-    update(newValue: string) {
+    update(oldValue: string, newValue:string) {
 
     }
 
-    delete() {
+    delete(name: string) {
 
     }
 
     private set(contents: string) {
-        window.localStorage.setItem('contents', contents)
+        window.localStorage.setItem('contents', contents);
     }
 
     private get() {
