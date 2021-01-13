@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CRUDService } from '../services/crud.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-todolist',
@@ -9,8 +9,8 @@ import { FormBuilder } from '@angular/forms';
 })
 export class TodolistComponent implements OnInit {
   
-  createForm = this.formBuilder.group({
-    title: ''
+  createForm = new FormGroup({
+    title: new FormControl('')
   });
 
   allEntries;
@@ -26,8 +26,12 @@ export class TodolistComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.createForm.reset();
+    //this.createForm.reset();
   }
 
+  submit(data){
+    console.log(data.title);
+    this.CRUD.create(data.title);
+  }
 }
 

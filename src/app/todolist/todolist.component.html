@@ -1,7 +1,7 @@
 <div class="element-adder">
-    <form class="add-control-panel">
+    <form [formGroup]="createForm" class="add-control-panel" (keyup.enter)="submit(createForm.value)">
         <p class="add-description">Type a name for new todo, and press enter</p>
-        <input type="text" placeholder="add new todo" name="title">
+        <input type="text" placeholder="add new todo" formControlName="title">
     </form>
 </div>
 

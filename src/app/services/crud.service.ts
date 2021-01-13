@@ -10,21 +10,24 @@ export class CRUDService {
     create(value: string) {
         // create an entry such like
         // "bejegyzés": {}
-        const previousEntries = this.get() ? this.get() : 'empty';
-        const newEntry = `${value}:{ isDone: false }`;
+        const previousEntries = this.get();
+        console.log(previousEntries);
+        const newEntry = `"${value}":{ "isDone": false }`;
 
         if (previousEntries !== 'empty') {
             let innerContents = previousEntries.substr(1, length - 1);
             const newContents = `{${innerContents}, \n ${newEntry}}`;
+            this.set(newContents);
         } else {
             const newContents = `{${newEntry}}`
+            this.set(newContents);
         }
-
     }
 
     read() {
         if (this.get()) {
             const contents = this.get();
+            console.log(contents)
             const finalObject = JSON.parse(contents);
 
             return finalObject;
