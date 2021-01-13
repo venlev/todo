@@ -1,5 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -7,20 +8,25 @@ import { Injectable } from '@angular/core';
 
 export class CRUDService {
 
+    private todo$: BehaviorSubject<any[]> = new BehaviorSubject([])
+
+    get todos(): Observable<any[]>{
+        return this.todo$.asObservable();
+    }
+
     create(value: string) {
-        // create an entry such like
-        // "bejegyzés": {}
-        const previousEntries = this.get();
+        const previousEntries: string = this.get();
         console.log(previousEntries);
         const newEntry = `"${value}":{ "isDone": false }`;
+        
+        let entrytocreate = [...previousEntries, newEntry]
 
-        if (previousEntries !== 'empty') {
-            let innerContents = previousEntries.substr(1, length - 1);
-            const newContents = `{${innerContents}, \n ${newEntry}}`;
-            this.set(newContents);
-        } else {
-            const newContents = `{${newEntry}}`
-            this.set(newContents);
+        if(previousEntries){
+            entrytocreate.forEach(element => {
+                
+            });
+        }else{
+            
         }
     }
 
