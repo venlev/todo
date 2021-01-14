@@ -17,28 +17,24 @@ export class CRUDService {
     create(value: string) {
         const previousEntries: string = this.get();
         console.log(previousEntries);
-        const newEntry = `"${value}":{ "isDone": false }`;
-        
-        let entrytocreate = [...previousEntries, newEntry]
+        const newEntry = `{ "title":"${value}" , "isDone": false }`;
+    
+        let entrytocreate = previousEntries ? `${previousEntries}; ${newEntry}` :  `${newEntry}`;
 
-        if(previousEntries){
-            entrytocreate.forEach(element => {
-                
-            });
-        }else{
-            
-        }
+        this.set(entrytocreate);
+        
+        if(this.read()) this.todo$.next([this.read()]);
     }
 
-    read() {
+    read(): string[] {
         if (this.get()) {
             const contents = this.get();
-            console.log(contents)
-            const finalObject = JSON.parse(contents);
-
+            //console.log(contents)
+            const finalObject = contents.split(';');
+        
             return finalObject;
         } else {
-            return 'empty'
+            return null;
         }
     }
 

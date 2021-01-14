@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CRUDService } from '../services/crud.service';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-todolist',
@@ -13,7 +14,8 @@ export class TodolistComponent implements OnInit {
     title: new FormControl('')
   });
 
-  allEntries;
+  allEntry;
+  allEntries: Object[] = []; 
 
   constructor(private CRUD: CRUDService, private formBuilder: FormBuilder) {
 
@@ -21,8 +23,13 @@ export class TodolistComponent implements OnInit {
 
   ngOnInit(): void {
     //this.allEntries = this.mockobject;
-    this.allEntries = this.CRUD.read() !== 'empty' ? this.CRUD.read() : {}
-
+    this.allEntry = this.CRUD.read();
+    if(this.allEntry){
+      this.allEntry.forEach(element => {
+        this.allEntries.push(JSON.parse(element));
+      });
+    }
+    
   }
 
   onSubmit(): void {
@@ -33,5 +40,16 @@ export class TodolistComponent implements OnInit {
     console.log(data.title);
     this.CRUD.create(data.title);
   }
+
+  testThing = this.CRUD.todos.subscribe({
+    next(data) { 
+      if(data && data.length > 0){
+        console.log('new data incoming: ', data)
+        this.allEntries = data;
+      }
+     }
+  })
+
+
 }
 
