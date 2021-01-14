@@ -14,16 +14,18 @@ export class CRUDService {
         return this.todo$.asObservable();
     }
 
+    init(){
+        if(this.read()){
+            this.todo$.next(this.read());
+        }
+    }
+
     create(value: string) {
         const previousEntries: string = this.get();
-        console.log(previousEntries);
         const newEntry = `{ "title":"${value}" , "isDone": false }`;
-    
         let entrytocreate = previousEntries ? `${previousEntries}; ${newEntry}` :  `${newEntry}`;
-
         this.set(entrytocreate);
-        
-        if(this.read()) this.todo$.next([this.read()]);
+        if(this.read()) this.todo$.next(this.read());
     }
 
     read(): string[] {
