@@ -1,4 +1,5 @@
 import { JsonPipe } from '@angular/common';
+import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -35,7 +36,7 @@ export class CRUDService {
             const newEntryTable: string = JSON.stringify(previousEntryArray)
             this.set(newEntryTable);
             if (this.read()) this.todo$.next(this.read());
-        }else{  // if this will be the first data
+        } else {  // if this will be the first data
             const container: object[] = [];
 
             const newEntry = {
@@ -54,7 +55,7 @@ export class CRUDService {
     read(): string[] {
         if (this.get()) {
             const contents = this.get();
-            const finalObject = JSON.parse(contents)
+            const finalObject = JSON.parse(contents);
 
             return finalObject;
         } else {
@@ -62,12 +63,40 @@ export class CRUDService {
         }
     }
 
-    update(oldValue: string, newValue: string) {
-        // this function is not in the requirements yet 
+    update(oldEntry: object, updatedEntry: object) {
+
+        const savedEntries: string = this.get();
+
+        if (savedEntries) {
+            const savedEntriesArray = JSON.parse(savedEntries);
+            let newEntriesArray: object[] = [];
+
+            savedEntriesArray.forEach(entry => { // replace old entry with updated
+
+                if (JSON.stringify(entry) === JSON.stringify(oldEntry)) {
+                    newEntriesArray.push(updatedEntry);
+                } else {
+                    newEntriesArray.push(entry);
+                }
+            });
+
+            const newEntryTable: string = JSON.stringify(newEntriesArray);
+            this.set(newEntryTable);
+            if (this.read()) this.todo$.next(this.read());
+
+        }
+
     }
 
-    delete(name: string) {
-
+    delete(cardToDelete: object) {
+        if(cardToDelete){
+            const oldData: string = this.get();
+            const oldList: object[] = JSON.parse(oldData);
+            const newList = oldList.filter(listElement=>JSON.stringify(listElement) !== JSON.stringify(cardToDelete));
+            const newListString: string = JSON.stringify(newList);
+            this.set(newListString);
+            if (this.read()) this.todo$.next(this.read());
+        }
     }
 
     private set(contents: string) {
