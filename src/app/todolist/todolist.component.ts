@@ -37,7 +37,7 @@ export class TodolistComponent implements OnInit {
       "title": card["title"],
       "isDone": !card["isDone"]
     }
-    console.log(`sending old ${JSON.stringify(card)} and new ${JSON.stringify(entryToUpdate)}`)
+    
     this.CRUD.update(card, entryToUpdate);
 
   }
