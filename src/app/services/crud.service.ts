@@ -10,30 +10,52 @@ export class CRUDService {
 
     private todo$: BehaviorSubject<any[]> = new BehaviorSubject([])
 
-    get todos(): Observable<any[]>{
+    get todos(): Observable<any[]> {
         return this.todo$.asObservable();
     }
 
-    init(){
-        if(this.read()){
+    init() {
+        if (this.read()) {
             this.todo$.next(this.read());
         }
     }
 
     create(value: string) {
         const previousEntries: string = this.get();
-        const newEntry = `{ "title":"${value}" , "isDone": false }`;
-        let entrytocreate = previousEntries ? `${previousEntries}; ${newEntry}` :  `${newEntry}`;
-        this.set(entrytocreate);
-        if(this.read()) this.todo$.next(this.read());
+        if (previousEntries) { // if there is a previous data inserted
+            const previousEntryArray: object[] = JSON.parse(previousEntries);
+
+            const newEntry = {
+                "title": null,
+                "isDone": false
+            }
+
+            newEntry.title = value
+            previousEntryArray.push(newEntry);
+            const newEntryTable: string = JSON.stringify(previousEntryArray)
+            this.set(newEntryTable);
+            if (this.read()) this.todo$.next(this.read());
+        }else{  // if this will be the first data
+            const container: object[] = [];
+
+            const newEntry = {
+                "title": null,
+                "isDone": false
+            }
+
+            newEntry.title = value;
+            container.push(newEntry);
+            const newEntryTable: string = JSON.stringify(container)
+            this.set(newEntryTable);
+            if (this.read()) this.todo$.next(this.read());
+        }
     }
 
     read(): string[] {
         if (this.get()) {
             const contents = this.get();
-            //console.log(contents)
-            const finalObject = contents.split(';');
-        
+            const finalObject = JSON.parse(contents)
+
             return finalObject;
         } else {
             return null;

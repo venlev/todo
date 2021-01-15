@@ -16,12 +16,11 @@ export class TodolistComponent implements OnInit {
 
   allEntries: Object[] = [];
 
-  constructor(private CRUD: CRUDService, private formBuilder: FormBuilder) {
+  constructor(private CRUD: CRUDService) {
     this.CRUD.todos.subscribe(data => {
       console.log(data);
-      data.forEach(element => {
-        this.allEntries.push(JSON.parse(element));
-      });
+      this.allEntries = data;
+      
     })
   }
 
