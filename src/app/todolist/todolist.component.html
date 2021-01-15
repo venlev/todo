@@ -9,7 +9,7 @@
     <div class="todocard" *ngFor="let card of allEntries">
         <div class="todocard-title">
             <p class="todo-close"><span class="icon-close">&times;</span></p>
-            <p class="todo-title">{{card.title}}</p>
+            <p class="todo-title">{{card.title | uppercase}}</p>
         </div>
         <div class="todocard-foot">
             <input type="checkbox" [checked]="card.isDone"><span class="checkbox-status" [ngClass]="{'color-done' : card.isDone === true}">{{card.isDone === true ? 'Done' : 'To do'}}</span>
