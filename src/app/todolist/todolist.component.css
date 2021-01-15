@@ -1,14 +1,17 @@
 .todocard{
-    width: 18rem;
-    background-color: yellow;
+    width: 98% !important;
+    background-color: rgb(255, 255, 255);
     overflow: hidden;
     margin: 10px;
     display: inline-block;
     font-family: sans-serif;
+    border: none;
+    border-radius: 5px;
 }
 .todocard-title{
-    width: 18rem;
-    background-color: rgb(234, 238, 2);
+    width: 100%;
+    background: rgb(2,117,216);
+    background: linear-gradient(90deg, rgba(2,117,216,1) 0%, rgba(91,192,222,1) 20%, rgba(0,212,255,1) 100%);
     margin-top: 0px;
 }
 
@@ -37,9 +40,9 @@
 }
 
 .icon-close{
-    border: 1px solid red;
+    border: 1px solid #d9534f;
     border-radius: 20px;
-    background: red;
+    background: #d9534f;
     box-shadow: rgba(128, 128, 128, 0.472) 1px 3px;
 }
 
@@ -61,18 +64,19 @@ input[type=checkbox]{
 }
 
 .add-control-panel{
-    background-color: black;
-    width: 30%;
+    background-color: #5bc0de;
+    width: 100%;
     padding: 10px;
     font-family: sans-serif;
     color: white;
     font-size: 1.3rem;
     display: block;
-    box-shadow: rgba(0, 0, 0, 0.267) 4px 10px;
 }
 
 input[type=text]{
-    font-size: 1.2rem;
+    font-size: 1.8rem;
+    border: none;
+    border-radius: 20px;
 }
 
 .color-done{

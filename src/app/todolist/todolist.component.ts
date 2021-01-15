@@ -18,9 +18,7 @@ export class TodolistComponent implements OnInit {
 
   constructor(private CRUD: CRUDService) {
     this.CRUD.todos.subscribe(data => {
-      console.log(data);
       this.allEntries = data;
-      
     })
   }
 
