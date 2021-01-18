@@ -1,4 +1,5 @@
 import { JsonPipe } from '@angular/common';
+import { SafePropertyRead } from '@angular/compiler';
 import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
 import { element } from 'protractor';
@@ -56,6 +57,7 @@ export class CRUDService {
 
         const storedEntries = this.todo$.getValue();
         storedEntries.push(updatedEntry);
+        storedEntries.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
         this.set(storedEntries);
         if (this.get()) this.todo$.next(this.get());
     }
