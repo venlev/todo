@@ -1,0 +1,18 @@
+<div class="element-adder">
+    <form [formGroup]="createForm" class="add-control-panel" (keyup.enter)="submit(createForm.value)">
+        <p class="add-description">type a name for new todo, and press enter &#x270D;</p>
+        <input type="text" placeholder="add new todo" formControlName="title">
+    </form>
+</div>
+
+<div class="cards-container">
+    <div class="todocard" *ngFor="let card of allEntries">
+        <div class="todocard-title">
+            <p class="todo-close"><span class="icon-close" (click)="deleteEntry(card)">&times;</span></p>
+            <p class="todo-title">{{card.title | uppercase}}</p>
+        </div>
+        <div class="todocard-foot">
+            <input type="checkbox" [checked]="card.isDone" (click)="checkboxStatusChange(card)"><span class="checkbox-status" [ngClass]="{ 'color-done' : card.isDone }">{{card.isDone ? 'Done' : 'To do'}}</span>
+        </div>
+    </div>
+</div>
