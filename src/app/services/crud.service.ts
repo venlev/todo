@@ -1,8 +1,4 @@
-import { JsonPipe } from '@angular/common';
-import { SafePropertyRead } from '@angular/compiler';
-import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
-import { element } from 'protractor';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -37,7 +33,8 @@ export class CRUDService {
         const newEntry = {
             "id": maxId + 1,
             "title": value,
-            "isDone": false
+            "isDone": false,
+            "tasks": []
         }
 
         targetList.push(newEntry);
@@ -52,7 +49,8 @@ export class CRUDService {
         const updatedEntry = {
             "id": card["id"],
             "title": card["title"],
-            "isDone": !card["isDone"]
+            "isDone": !card["isDone"],
+            "tasks": card["tasks"]
         }
 
         const storedEntries = this.todo$.getValue();
@@ -60,6 +58,10 @@ export class CRUDService {
         storedEntries.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
         this.set(storedEntries);
         if (this.get()) this.todo$.next(this.get());
+    }
+
+    addTask(taskName: string, parentID: number){
+
     }
 
     delete(id: number) {

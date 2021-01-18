@@ -14,6 +14,10 @@ export class TodolistComponent implements OnInit {
     title: new FormControl('')
   });
 
+  createTask = new FormGroup({
+    taskName: new FormControl('')
+  });
+
   allEntries: Object[] = [];
 
   constructor(private CRUD: CRUDService) {
@@ -30,6 +34,15 @@ export class TodolistComponent implements OnInit {
     this.CRUD.create(data.title);
     this.createForm.reset()
     //this.ngOnInit();
+  }
+  
+  submitTask(taskName, parentID){
+    if(taskName && parentID){
+      const name = taskName.taskName;
+    }
+
+    console.log(taskName, parentID)
+    
   }
 
   checkboxStatusChange(card: object){

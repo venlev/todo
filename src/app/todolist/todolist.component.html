@@ -11,6 +11,22 @@
             <p class="todo-close"><span class="icon-close" (click)="deleteEntry(card)">&times;</span></p>
             <p class="todo-title">{{card.title | uppercase}}</p>
         </div>
+        <div class="todocard-body">
+            <div class="sub-todo-list">
+                <div class="subtodo-item" *ngFor="let task of card['tasks']">
+                    <span class="subtodo-name">Teendő 1</span>
+                    <label for="" class="sub-checkbox">
+                        To do
+                        <input type="checkbox">
+                    </label>
+                </div>
+            </div>
+            <div class="todo-list-panel">
+                <form action="" [formGroup]="createTask" (keyup.enter)="submitTask(createTask.value, card.id)">
+                    <input type="text" formControlName="taskName" placeholder="add a subtodo" class="add-subtodo-input">
+                </form>
+            </div>
+        </div>
         <div class="todocard-foot">
             <input type="checkbox" [checked]="card.isDone" (click)="checkboxStatusChange(card)"><span class="checkbox-status" [ngClass]="{ 'color-done' : card.isDone }">{{card.isDone ? 'Done' : 'To do'}}</span>
         </div>
