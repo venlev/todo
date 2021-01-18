@@ -29,21 +29,17 @@ export class TodolistComponent implements OnInit {
   submit(data) {
     this.CRUD.create(data.title);
     this.createForm.reset()
-    this.ngOnInit();
+    //this.ngOnInit();
   }
 
-  checkboxStatusChange(card:object){
-    const entryToUpdate = {
-      "title": card["title"],
-      "isDone": !card["isDone"]
-    }
-    
-    this.CRUD.update(card, entryToUpdate);
+  checkboxStatusChange(card: object){
+    this.CRUD.update(card);
 
   }
 
-  deleteEntry(card: object){
-    this.CRUD.delete(card);
+  deleteEntry(card: {"id": number}){
+    const id = card["id"]; 
+    this.CRUD.delete(id);
   }
 }
 

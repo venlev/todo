@@ -1,6 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
+import { element } from 'protractor';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -16,94 +17,68 @@ export class CRUDService {
     }
 
     init() {
-        if (this.read()) {
-            this.todo$.next(this.read());
+        if (this.get()) {
+            this.todo$.next(this.get());
         }
     }
 
     create(value: string) {
-        const previousEntries: string = this.get();
-        if (previousEntries) { // if there is a previous data inserted
-            const previousEntryArray: object[] = JSON.parse(previousEntries);
+        const targetList = this.todo$.getValue();
+        let maxId = 0;
 
-            const newEntry = {
-                "title": null,
-                "isDone": false
+        targetList.forEach(element => { // get the last id
+            const id = element.id;
+            if (id > maxId) {
+                maxId = id;
             }
+        })
 
-            newEntry.title = value
-            previousEntryArray.push(newEntry);
-            const newEntryTable: string = JSON.stringify(previousEntryArray)
-            this.set(newEntryTable);
-            if (this.read()) this.todo$.next(this.read());
-        } else {  // if this will be the first data
-            const container: object[] = [];
+        const newEntry = {
+            "id": maxId + 1,
+            "title": value,
+            "isDone": false
+        }
 
-            const newEntry = {
-                "title": null,
-                "isDone": false
-            }
+        targetList.push(newEntry);
+        this.set(targetList);
+        if (this.get()) this.todo$.next(this.get());
+    }
 
-            newEntry.title = value;
-            container.push(newEntry);
-            const newEntryTable: string = JSON.stringify(container)
-            this.set(newEntryTable);
-            if (this.read()) this.todo$.next(this.read());
+    update(card: object) {
+        // delete by id > set a new with the same ID
+        this.delete(card['id']);
+
+        const updatedEntry = {
+            "id": card["id"],
+            "title": card["title"],
+            "isDone": !card["isDone"]
+        }
+
+        const storedEntries = this.todo$.getValue();
+        storedEntries.push(updatedEntry);
+        this.set(storedEntries);
+        if (this.get()) this.todo$.next(this.get());
+    }
+
+    delete(id: number) {
+        if (id) {
+            const currentData: object[] = this.todo$.getValue();
+            const newList = currentData.filter(element => element['id'] !== id);
+            this.set(newList);
+            if (this.get()) this.todo$.next(this.get());
         }
     }
 
-    read(): string[] {
-        if (this.get()) {
-            const contents = this.get();
-            const finalObject = JSON.parse(contents);
-
-            return finalObject;
-        } else {
-            return null;
-        }
-    }
-
-    update(oldEntry: object, updatedEntry: object) {
-
-        const savedEntries: string = this.get();
-
-        if (savedEntries) {
-            const savedEntriesArray = JSON.parse(savedEntries);
-            let newEntriesArray: object[] = [];
-
-            savedEntriesArray.forEach(entry => { // replace old entry with updated
-
-                if (JSON.stringify(entry) === JSON.stringify(oldEntry)) {
-                    newEntriesArray.push(updatedEntry);
-                } else {
-                    newEntriesArray.push(entry);
-                }
-            });
-
-            const newEntryTable: string = JSON.stringify(newEntriesArray);
-            this.set(newEntryTable);
-            if (this.read()) this.todo$.next(this.read());
-
-        }
-
-    }
-
-    delete(cardToDelete: object) {
-        if(cardToDelete){
-            const oldData: string = this.get();
-            const oldList: object[] = JSON.parse(oldData);
-            const newList = oldList.filter(listElement=>JSON.stringify(listElement) !== JSON.stringify(cardToDelete));
-            const newListString: string = JSON.stringify(newList);
-            this.set(newListString);
-            if (this.read()) this.todo$.next(this.read());
-        }
-    }
-
-    private set(contents: string) {
-        window.localStorage.setItem('contents', contents);
+    private set(contents: object[]) {
+        window.localStorage.setItem('contents', JSON.stringify(contents));
     }
 
     private get() {
-        return window.localStorage.getItem('contents');
+        const contents = window.localStorage.getItem('contents');
+        if (contents) {
+            return JSON.parse(contents);
+        } else {
+            return []
+        }
     }
 }
