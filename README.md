@@ -1,8 +1,8 @@
 # Todo
 
-[![CircleCI Status](https://circleci.com/gh/venlev/todo.svg?style=shield)](https://app.circleci.com/pipelines/github/venlev/todo?branch=master)
+[![CircleCI Status](https://circleci.com/gh/venlev/todo.svg?style=shield)](https://app.circleci.com/pipelines/github/venlev/todo?branch=main)
 ![GitHub repo size](https://img.shields.io/github/repo-size/venlev/todo)
-![GitHub last commit (master)](https://img.shields.io/github/last-commit/venlev/todo/master)
+![GitHub last commit (master)](https://img.shields.io/github/last-commit/venlev/todo/main)
 ![GitHub contributors](https://img.shields.io/github/contributors/venlev/todo)
 ![Angular version](https://img.shields.io/github/package-json/dependency-version/venlev/todo/@angular/core)
 ![RxJs version](https://img.shields.io/github/package-json/dependency-version/venlev/todo/rxjs)
