@@ -35,22 +35,22 @@ export class TodolistComponent implements OnInit {
     this.createForm.reset()
     //this.ngOnInit();
   }
-  
-  submitTask(taskName, parentID){
-    if(taskName && parentID){
+
+  submitTask(taskName, parentID) {
+    if (taskName && parentID) {
       const name = taskName.taskName;
       this.CRUD.addTask(taskName, parentID);
       this.createTask.reset();
     }
   }
 
-  checkboxStatusChange(card: object){
-    this.CRUD.update(card);
-
+  checkboxStatusChange(element: object, parent?: object) {
+    if (element.hasOwnProperty('name')) this.CRUD.updateTask(element, parent);
+    else this.CRUD.update(element);
   }
 
-  deleteEntry(card: {"id": number}){
-    const id = card["id"]; 
+  deleteEntry(card: { "id": number }) {
+    const id = card["id"];
     this.CRUD.delete(id);
   }
 }

@@ -43,15 +43,26 @@ export class CRUDService {
 
     }
 
-    update(card: object) {
-        // delete by id > set a new with the same ID
+    update(card: object, isInternal?: boolean) {
         this.delete(card['id']);
+        let updatedEntry: object = {};
 
-        const updatedEntry = {
-            "id": card["id"],
-            "title": card["title"],
-            "isDone": !card["isDone"],
-            "tasks": card["tasks"]
+        if(!isInternal){
+
+            // set all sub tasks isDone flag to true
+            card['tasks'].map(task=>{
+                task['isDone'] = true;
+                return task;
+            })
+
+            updatedEntry = {
+                "id": card["id"],
+                "title": card["title"],
+                "isDone": !card["isDone"],
+                "tasks": card["tasks"]
+            }
+        } else {
+            updatedEntry = card;
         }
 
         const storedEntries = this.todo$.getValue();
@@ -78,6 +89,21 @@ export class CRUDService {
         });
 
         this.save(currentData);
+    }
+
+    updateTask(task: object, parent: object){
+
+        let oneTask = parent['tasks'].filter(taskNode=>taskNode['name'] === task['name']);
+
+        let modifiedTask = {
+            "id": task['id'],
+            "name": task['name'],
+            "isDone": !oneTask[0]['isDone']
+        }
+
+        let newTaskList = parent['tasks'].map(taskNode=>taskNode['id'] === modifiedTask['id'] ? modifiedTask : taskNode);
+        parent['tasks'] = newTaskList;
+        this.update(parent, true);
     }
 
     delete(id: number) {
