@@ -40,6 +40,7 @@ export class TodolistComponent implements OnInit {
     if(taskName && parentID){
       const name = taskName.taskName;
       this.CRUD.addTask(taskName, parentID);
+      this.createTask.reset();
     }
   }
 

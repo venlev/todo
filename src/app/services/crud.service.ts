@@ -63,8 +63,7 @@ export class CRUDService {
     addTask(taskName: string, parentID: number) {
         const currentData: object[] = this.todo$.getValue();
         const thisEntry = currentData.filter(element => element['id'] === parentID);
-        console.log(thisEntry['tasks']);
-        const newId = thisEntry['tasks'].length < 1 ? 0 : parseInt(thisEntry["tasks"].length) + 1;
+        const newId = thisEntry[0]['tasks'].length < 1 ? 0 : parseInt(thisEntry[0]['tasks'].length) + 1;
 
         const newTask = {
             "id": newId,
