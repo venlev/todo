@@ -47,11 +47,16 @@ export class CRUDService {
         this.delete(card['id']);
         let updatedEntry: object = {};
 
-        if(!isInternal){
+        if (!isInternal) {
 
             // set all sub tasks isDone flag to true
-            card['tasks'].map(task=>{
-                task['isDone'] = true;
+            card['tasks'].map(task => {
+                if (!card['isDone']) {
+                    task['isDone'] = true;
+                } else {
+                    task['isDone'] = false;
+                }
+
                 return task;
             })
 
@@ -82,8 +87,8 @@ export class CRUDService {
             "isDone": false,
         }
 
-        currentData.forEach(entry=>{
-            if(entry['id'] === parentID){
+        currentData.forEach(entry => {
+            if (entry['id'] === parentID) {
                 entry['tasks'].push(newTask);
             }
         });
@@ -91,9 +96,9 @@ export class CRUDService {
         this.save(currentData);
     }
 
-    updateTask(task: object, parent: object){
+    updateTask(task: object, parent: object) {
 
-        let oneTask = parent['tasks'].filter(taskNode=>taskNode['name'] === task['name']);
+        let oneTask = parent['tasks'].filter(taskNode => taskNode['name'] === task['name']);
 
         let modifiedTask = {
             "id": task['id'],
@@ -101,7 +106,7 @@ export class CRUDService {
             "isDone": !oneTask[0]['isDone']
         }
 
-        let newTaskList = parent['tasks'].map(taskNode=>taskNode['id'] === modifiedTask['id'] ? modifiedTask : taskNode);
+        let newTaskList = parent['tasks'].map(taskNode => taskNode['id'] === modifiedTask['id'] ? modifiedTask : taskNode);
         parent['tasks'] = newTaskList;
         this.update(parent, true);
     }
