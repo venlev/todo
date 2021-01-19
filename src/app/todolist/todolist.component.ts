@@ -39,10 +39,8 @@ export class TodolistComponent implements OnInit {
   submitTask(taskName, parentID){
     if(taskName && parentID){
       const name = taskName.taskName;
+      this.CRUD.addTask(taskName, parentID);
     }
-
-    console.log(taskName, parentID)
-    
   }
 
   checkboxStatusChange(card: object){

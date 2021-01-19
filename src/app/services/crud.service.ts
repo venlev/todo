@@ -38,8 +38,9 @@ export class CRUDService {
         }
 
         targetList.push(newEntry);
-        this.set(targetList);
-        if (this.get()) this.todo$.next(this.get());
+
+        this.save(targetList);
+
     }
 
     update(card: object) {
@@ -56,21 +57,41 @@ export class CRUDService {
         const storedEntries = this.todo$.getValue();
         storedEntries.push(updatedEntry);
         storedEntries.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-        this.set(storedEntries);
-        if (this.get()) this.todo$.next(this.get());
+        this.save(storedEntries);
     }
 
-    addTask(taskName: string, parentID: number){
+    addTask(taskName: string, parentID: number) {
+        const currentData: object[] = this.todo$.getValue();
+        const thisEntry = currentData.filter(element => element['id'] === parentID);
+        console.log(thisEntry['tasks']);
+        const newId = thisEntry['tasks'].length < 1 ? 0 : parseInt(thisEntry["tasks"].length) + 1;
 
+        const newTask = {
+            "id": newId,
+            "name": taskName,
+            "isDone": false,
+        }
+
+        currentData.forEach(entry=>{
+            if(entry['id'] === parentID){
+                entry['tasks'].push(newTask);
+            }
+        });
+
+        this.save(currentData);
     }
 
     delete(id: number) {
         if (id) {
             const currentData: object[] = this.todo$.getValue();
             const newList = currentData.filter(element => element['id'] !== id);
-            this.set(newList);
-            if (this.get()) this.todo$.next(this.get());
+            this.save(newList);
         }
+    }
+
+    save(list: object[]) {
+        this.set(list);
+        if (this.get()) this.todo$.next(this.get());
     }
 
     private set(contents: object[]) {
