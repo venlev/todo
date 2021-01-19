@@ -14,7 +14,7 @@
         <div class="todocard-body">
             <div class="sub-todo-list">
                 <div class="subtodo-item" *ngFor="let task of card['tasks']">
-                    <span class="subtodo-name">Teendő 1</span>
+                    <span class="subtodo-name">{{task.name}}</span>
                     <label for="" class="sub-checkbox">
                         To do
                         <input type="checkbox">

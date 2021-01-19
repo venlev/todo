@@ -67,7 +67,7 @@ export class CRUDService {
 
         const newTask = {
             "id": newId,
-            "name": taskName,
+            "name": taskName['taskName'],
             "isDone": false,
         }
 
