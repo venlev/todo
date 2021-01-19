@@ -45,8 +45,13 @@ export class TodolistComponent implements OnInit {
   }
 
   checkboxStatusChange(element: object, parent?: object) {
-    if (element.hasOwnProperty('name')) this.CRUD.updateTask(element, parent);
-    else this.CRUD.update(element);
+    if (element.hasOwnProperty('name')) {
+      this.CRUD.updateTask(element, parent);
+      const checkedAll = parent['tasks'].every(task => task['isDone']);
+      if (checkedAll) this.checkboxStatusChange(parent);
+    } else {
+      this.CRUD.update(element);
+    }
   }
 
   deleteEntry(card: { "id": number }) {

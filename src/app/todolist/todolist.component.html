@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="todocard-foot">
-            <input type="checkbox" [checked]="card.isDone" (click)="checkboxStatusChange(card)"><span class="checkbox-status" [ngClass]="{ 'color-done' : card.isDone }">{{card.isDone ? 'Done' : 'To do'}}</span>
+            <input type="checkbox" [checked]="card.isDone" [data-id]="card.id" (click)="checkboxStatusChange(card)"><span class="checkbox-status" [ngClass]="{ 'color-done' : card.isDone }">{{card.isDone ? 'Done' : 'To do'}}</span>
         </div>
     </div>
 </div>

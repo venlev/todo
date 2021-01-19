@@ -43,11 +43,11 @@ export class CRUDService {
 
     }
 
-    update(card: object, isInternal?: boolean) {
+    update(card: object, isInternal?: string) {
         this.delete(card['id']);
         let updatedEntry: object = {};
 
-        if (!isInternal) {
+        if (isInternal !== 'internal') {
 
             // set all sub tasks isDone flag to true
             card['tasks'].map(task => {
@@ -108,7 +108,7 @@ export class CRUDService {
 
         let newTaskList = parent['tasks'].map(taskNode => taskNode['id'] === modifiedTask['id'] ? modifiedTask : taskNode);
         parent['tasks'] = newTaskList;
-        this.update(parent, true);
+        this.update(parent, 'internal');
     }
 
     delete(id: number) {
