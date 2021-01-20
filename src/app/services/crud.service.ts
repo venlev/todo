@@ -54,7 +54,7 @@ export class CRUDService {
                 if (!card['isDone']) {
                     task['isDone'] = true;
                 } else {
-                    task['isDone'] = false;
+                    task['isDone'] = true;
                 }
 
                 return task;
