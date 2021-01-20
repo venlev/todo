@@ -2,6 +2,31 @@ version: 2.1
 orbs:
   node: circleci/node@3.0.0
 workflows:
-  node-tests:
+  application-pre-check:
     jobs:
-      - node/test
+      - lint
+      - test
+  application-build:
+    jobs:
+      - build
+jobs:
+  lint:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run: npm run lint
+  test:
+    executor: node/default
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - node/install-packages
+      - run: npm run test:ci -- --browsers=ChromeHeadlessCI
+  build:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run: npm run build
