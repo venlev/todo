@@ -28,3 +28,13 @@ body{
 
 /* SCROLLBAR END */
 
+.erase-task{
+    color: red;
+    font-weight: bolder;
+    font-size: 1.5rem;
+    text-shadow: 2px 1px black;
+    margin: 5px 10px;
+}
+.erase-task:hover{
+    filter: invert();
+}

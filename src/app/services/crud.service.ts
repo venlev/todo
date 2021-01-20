@@ -53,10 +53,7 @@ export class CRUDService {
             card['tasks'].map(task => {
                 if (!card['isDone']) {
                     task['isDone'] = true;
-                } else {
-                    task['isDone'] = true;
                 }
-
                 return task;
             })
 
@@ -79,7 +76,7 @@ export class CRUDService {
     addTask(taskName: string, parentID: number) {
         const currentData: object[] = this.todo$.getValue();
         const thisEntry = currentData.filter(element => element['id'] === parentID);
-        const newId = thisEntry[0]['tasks'].length < 1 ? 0 : parseInt(thisEntry[0]['tasks'].length) + 1;
+        const newId = thisEntry[0]['tasks'].length < 1 ? 1 : parseInt(thisEntry[0]['tasks'].length) + 1;
 
         const newTask = {
             "id": newId,
@@ -117,6 +114,22 @@ export class CRUDService {
             const newList = currentData.filter(element => element['id'] !== id);
             this.save(newList);
         }
+    }
+
+    deleteTask(parent: object, childID: number){
+        /*
+        1) a parent['tasks'] - on belül filterrel kiszülni, ahol az id != childID-val
+        2) updatelni a parent tasksjait
+        3) updatelni az egész datasetet
+        */
+
+        const filteredChildren = parent['tasks'].filter(child=>child.id !== childID);
+        parent['tasks']  = filteredChildren;
+        const currentData: object[] = this.todo$.getValue();
+        const newDataset = currentData.filter(parents=>parents['id'] !== parent['id']);
+        newDataset.push(parent);
+        newDataset.sort((a, b) => (a['id'] > b['id']) ? 1 : ((b['id'] > a['id']) ? -1 : 0));
+        this.save(newDataset);
     }
 
     save(list: object[]) {

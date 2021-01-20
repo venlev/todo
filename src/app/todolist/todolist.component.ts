@@ -54,9 +54,14 @@ export class TodolistComponent implements OnInit {
     }
   }
 
-  deleteEntry(card: { "id": number }) {
-    const id = card["id"];
-    this.CRUD.delete(id);
+  deleteEntry(card: object, taskId?: number) {
+    if(taskId){
+      this.CRUD.deleteTask(card, taskId);
+    }else{
+      const id = card["id"];
+      this.CRUD.delete(id);
+    }
   }
+
 }
 
