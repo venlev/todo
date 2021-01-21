@@ -15,9 +15,9 @@
             <div class="sub-todo-list">
                 <div class="subtodo-item" *ngFor="let task of card['tasks']">
                     <span class="subtodo-name"><span class="erase-task" (click)="deleteEntry(card, task.id)">x</span>{{task.name}}</span>
-                    <label for="" class="sub-checkbox" [ngClass]="{ 'color-done' : card.isDone || task.isDone }">
-                        {{card.isDone || task.isDone ? 'Done' : 'To do'}}
-                        <input type="checkbox" [checked]="card.isDone || task.isDone" (click)="checkboxStatusChange(task, card)">
+                    <label for="" class="sub-checkbox" [ngClass]="{ 'color-done' : task.isDone }">
+                        {{task.isDone ? 'Done' : 'To do'}}
+                        <input type="checkbox" [checked]="task.isDone" (click)="checkboxStatusChange(task, card)">
                     </label>
                 </div>
             </div>

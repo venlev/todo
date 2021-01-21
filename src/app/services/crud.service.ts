@@ -43,34 +43,38 @@ export class CRUDService {
 
     }
 
-    update(card: object, isInternal?: string) {
-        this.delete(card['id']);
-        let updatedEntry: object = {};
+    update(element: object, parent?: object) {
+        let recentElements = this.todo$.getValue();
+        if (parent) {
+            const originalElement = recentElements.find(topLevelTask => topLevelTask['id'] === parent['id']);
+            const isAllCheckedBefore = originalElement['tasks'].every(subTask => subTask['isDone']);
 
-        if (isInternal !== 'internal') {
-
-            // set all sub tasks isDone flag to true
-            card['tasks'].map(task => {
-                if (!card['isDone']) {
-                    task['isDone'] = true;
-                }
-                return task;
-            })
-
-            updatedEntry = {
-                "id": card["id"],
-                "title": card["title"],
-                "isDone": !card["isDone"],
-                "tasks": card["tasks"]
+            if (isAllCheckedBefore) {
+                parent['isDone'] = false;
+                element['isDone'] = !element['isDone'];
+            } else {
+                element['isDone'] = !element['isDone'];
             }
-        } else {
-            updatedEntry = card;
-        }
 
-        const storedEntries = this.todo$.getValue();
-        storedEntries.push(updatedEntry);
-        storedEntries.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-        this.save(storedEntries);
+            console.log(originalElement, isAllCheckedBefore);
+        } else {
+            element['isDone'] = !element['isDone'];
+            element['tasks'].map(task => {
+                task['isDone'] = true;
+            });
+
+        }
+        
+        this.save(recentElements);  // saving the object with the updated reference value
+        
+        if(parent){
+            let recentElements = this.todo$.getValue();
+            const newParent = recentElements.find(topLevelTasks=> topLevelTasks['id'] === parent['id']);
+            const checkIfEveryIsDone = newParent['tasks'].every(task=>task['isDone']);
+            if(checkIfEveryIsDone) newParent['isDone'] = true;
+
+            this.save(recentElements);
+        }
     }
 
     addTask(taskName: string, parentID: number) {
@@ -93,21 +97,6 @@ export class CRUDService {
         this.save(currentData);
     }
 
-    updateTask(task: object, parent: object) {
-
-        let oneTask = parent['tasks'].filter(taskNode => taskNode['name'] === task['name']);
-
-        let modifiedTask = {
-            "id": task['id'],
-            "name": task['name'],
-            "isDone": !oneTask[0]['isDone']
-        }
-
-        let newTaskList = parent['tasks'].map(taskNode => taskNode['id'] === modifiedTask['id'] ? modifiedTask : taskNode);
-        parent['tasks'] = newTaskList;
-        this.update(parent, 'internal');
-    }
-
     delete(id: number) {
         if (id) {
             const currentData: object[] = this.todo$.getValue();
@@ -116,17 +105,12 @@ export class CRUDService {
         }
     }
 
-    deleteTask(parent: object, childID: number){
-        /*
-        1) a parent['tasks'] - on belül filterrel kiszülni, ahol az id != childID-val
-        2) updatelni a parent tasksjait
-        3) updatelni az egész datasetet
-        */
-
-        const filteredChildren = parent['tasks'].filter(child=>child.id !== childID);
-        parent['tasks']  = filteredChildren;
+    deleteTask(parent: object, childID: number) {
+        
+        const filteredChildren = parent['tasks'].filter(child => child.id !== childID);
+        parent['tasks'] = filteredChildren;
         const currentData: object[] = this.todo$.getValue();
-        const newDataset = currentData.filter(parents=>parents['id'] !== parent['id']);
+        const newDataset = currentData.filter(parents => parents['id'] !== parent['id']);
         newDataset.push(parent);
         newDataset.sort((a, b) => (a['id'] > b['id']) ? 1 : ((b['id'] > a['id']) ? -1 : 0));
         this.save(newDataset);
