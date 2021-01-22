@@ -56,7 +56,6 @@ export class CRUDService {
                 element['isDone'] = !element['isDone'];
             }
 
-            console.log(originalElement, isAllCheckedBefore);
         } else {
             element['isDone'] = !element['isDone'];
             element['tasks'].map(task => {
@@ -64,14 +63,14 @@ export class CRUDService {
             });
 
         }
-        
+
         this.save(recentElements);  // saving the object with the updated reference value
-        
-        if(parent){
+
+        if (parent) {
             let recentElements = this.todo$.getValue();
-            const newParent = recentElements.find(topLevelTasks=> topLevelTasks['id'] === parent['id']);
-            const checkIfEveryIsDone = newParent['tasks'].every(task=>task['isDone']);
-            if(checkIfEveryIsDone) newParent['isDone'] = true;
+            const newParent = recentElements.find(topLevelTasks => topLevelTasks['id'] === parent['id']);
+            const checkIfEveryIsDone = newParent['tasks'].every(task => task['isDone']);
+            if (checkIfEveryIsDone) newParent['isDone'] = true;
 
             this.save(recentElements);
         }
@@ -95,6 +94,7 @@ export class CRUDService {
         });
 
         this.save(currentData);
+        this.refreshChecklist(thisEntry[0]);
     }
 
     delete(id: number) {
@@ -106,7 +106,7 @@ export class CRUDService {
     }
 
     deleteTask(parent: object, childID: number) {
-        
+
         const filteredChildren = parent['tasks'].filter(child => child.id !== childID);
         parent['tasks'] = filteredChildren;
         const currentData: object[] = this.todo$.getValue();
@@ -114,11 +114,28 @@ export class CRUDService {
         newDataset.push(parent);
         newDataset.sort((a, b) => (a['id'] > b['id']) ? 1 : ((b['id'] > a['id']) ? -1 : 0));
         this.save(newDataset);
+        this.refreshChecklist(parent);
     }
 
     save(list: object[]) {
         this.set(list);
         if (this.get()) this.todo$.next(this.get());
+    }
+
+    refreshChecklist(modifiedSubtodoParent: object) {
+        const store: object[] = this.todo$.getValue();
+        if (modifiedSubtodoParent) {
+            const storedParent = store.find(parent => parent['id'] === modifiedSubtodoParent['id']);
+            const fellowSubtodos = storedParent['tasks'];
+            const isAllChecked = fellowSubtodos.every(fellow => fellow['isDone']);
+
+            if (isAllChecked) {
+                storedParent['isDone'] = true;
+            } else {
+                storedParent['isDone'] = false;
+            }
+            this.save(store);
+        }
     }
 
     private set(contents: object[]) {
