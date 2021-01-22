@@ -6,10 +6,10 @@ export class Card{
     isDone: boolean;
     tasks: Task[];
 
-    constructor(card: {id: number, title:string, isDone:boolean, tasks: object[]}){
+    constructor(card: {id: number, title:string, isDone:boolean, tasks: Task[]}){
         this.id = card.id;
         this.title = card.title,
         this.isDone = card.isDone;
-        this.tasks; // itt kéne lefaktorálni a Task() - modellel a dolgot
+        this.tasks = card.tasks.map(task=>new Task(task))
     }
 }

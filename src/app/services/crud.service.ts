@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Card } from '../models/card.model';
+import { map } from 'rxjs/add/operator/map';
 
 @Injectable({
     providedIn: 'root'
