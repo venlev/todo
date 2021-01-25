@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CRUDService } from '../services/crud.service';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
+import { Task } from '../models/task.model';
+import { Card } from '../models/card.model';
 
 @Component({
   selector: 'app-todolist',
@@ -23,6 +25,7 @@ export class TodolistComponent implements OnInit {
   constructor(private CRUD: CRUDService) {
     this.CRUD.todos.subscribe(data => {
       this.allEntries = data;
+      //console.log(data);
     })
   }
 
@@ -44,16 +47,16 @@ export class TodolistComponent implements OnInit {
     }
   }
 
-  checkboxStatusChange(element: object, parent?: object) {
-    if (parent) this.CRUD.update(element, parent)
-    else this.CRUD.update(element);
+  checkboxStatusChange(element: Card | Task, parent?: Card) {
+    //console.log(element, parent);
+    this.CRUD.update(element, parent);
   }
 
-  deleteEntry(card: object, taskId?: number) {
+  deleteEntry(card: Card | Task, taskId?: number) {
     if (taskId) {
-      this.CRUD.deleteTask(card, taskId);
+      this.CRUD.deleteTask(card as Card, taskId);
     } else {
-      const id = card["id"];
+      const id = card.id;
       this.CRUD.delete(id);
     }
   }
