@@ -1,9 +1,8 @@
-import { JsonPipe } from '@angular/common';
-import { SafePropertyRead } from '@angular/compiler';
-import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
-import { element } from 'protractor';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Card } from '../models/card.model';
+import { Task } from '../models/task.model';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -11,10 +10,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 export class CRUDService {
 
-    private todo$: BehaviorSubject<any[]> = new BehaviorSubject([])
+    private todo$: BehaviorSubject<Card[]> = new BehaviorSubject([])
 
-    get todos(): Observable<any[]> {
-        return this.todo$.asObservable();
+    get todos(): Observable<Card[]> {
+        return this.todo$.pipe(
+            map((cards) => {
+                return cards.map(c => new Card(c))
+            })
+        )
     }
 
     init() {
@@ -24,7 +27,7 @@ export class CRUDService {
     }
 
     create(value: string) {
-        const targetList = this.todo$.getValue();
+        const targetList: Card[] = this.todo$.getValue();
         let maxId = 0;
 
         targetList.forEach(element => { // get the last id
@@ -34,40 +37,111 @@ export class CRUDService {
             }
         })
 
-        const newEntry = {
-            "id": maxId + 1,
-            "title": value,
-            "isDone": false
+        const newEntry: Card = {
+            id: maxId + 1,
+            title: value,
+            isDone: false,
+            tasks: []
         }
 
         targetList.push(newEntry);
-        this.set(targetList);
-        if (this.get()) this.todo$.next(this.get());
+
+        this.save(targetList);
+
     }
 
-    update(card: object) {
-        // delete by id > set a new with the same ID
-        this.delete(card['id']);
+    update(element: Task | Card, parent?: Card) {
+        let recentElements: Card[] = this.todo$.getValue();
+        
+        if (parent) {
+            const originalElement:Card = recentElements.find(topLevelTask => topLevelTask.id === parent.id);
+            const isAllCheckedBefore = originalElement.tasks.every(subTask => subTask.isDone);
+            const originalTask = originalElement.tasks.find(tasks=> tasks.id === element.id);
+            originalTask.isDone = !originalTask.isDone;
+            if (isAllCheckedBefore) {
+                originalElement.isDone = false;    
+            }
 
-        const updatedEntry = {
-            "id": card["id"],
-            "title": card["title"],
-            "isDone": !card["isDone"]
+        } else {
+            const localElement: Card = recentElements.find(cardInContext => cardInContext.id === element.id)
+            localElement.isDone = !localElement.isDone;
+            (localElement as Card).tasks.map(task => {
+                task.isDone = true;
+            });
         }
 
-        const storedEntries = this.todo$.getValue();
-        storedEntries.push(updatedEntry);
-        storedEntries.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-        this.set(storedEntries);
-        if (this.get()) this.todo$.next(this.get());
+        this.save(recentElements);  // saving the object with the updated reference value
+
+        if (parent) {
+            let savedElements: Card[] = this.todo$.getValue();
+            const newParent: Card = savedElements.find(topLevelTasks => topLevelTasks.id === parent.id);
+            const checkIfEveryIsDone = newParent.tasks.every(task => task.isDone);
+            if (checkIfEveryIsDone) newParent.isDone = true;
+
+            this.save(savedElements);
+        }
+    }
+
+    addTask(taskName: string, parentID: number) {
+        const currentData: Card[] = this.todo$.getValue();
+        const thisEntry:Card = currentData.find(element => element.id === parentID);
+
+        const newId = thisEntry.tasks.length < 1 ? 1 : thisEntry.tasks[thisEntry.tasks.length-1].id + 1;
+
+        const newTask: Task = {
+            id: newId,
+            name: taskName['taskName'],
+            isDone: false,
+        }
+
+        currentData.forEach(entry => {
+            if (entry.id === parentID) {
+                entry.tasks.push(newTask);
+            }
+        });
+
+        this.save(currentData);
+        this.refreshChecklist(thisEntry[0]);
     }
 
     delete(id: number) {
         if (id) {
-            const currentData: object[] = this.todo$.getValue();
-            const newList = currentData.filter(element => element['id'] !== id);
-            this.set(newList);
-            if (this.get()) this.todo$.next(this.get());
+            const currentData: Card[] = this.todo$.getValue();
+            const newList = currentData.filter(element => element.id !== id);
+            this.save(newList);
+        }
+    }
+
+    deleteTask(parent: Card, childID: number) {
+
+        const filteredChildren:Task[] = parent.tasks.filter(child => child.id !== childID);
+        parent.tasks = filteredChildren;
+        const currentData: Card[] = this.todo$.getValue();
+        const newDataset = currentData.filter(parents => parents.id !== parent.id);
+        newDataset.push(parent);
+        newDataset.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+        this.save(newDataset);
+        this.refreshChecklist(parent);
+    }
+
+    save(list: Card[]) {
+        this.set(list);
+        if (this.get()) this.todo$.next(this.get());
+    }
+
+    refreshChecklist(modifiedSubtodoParent: Card) {
+        const store: Card[] = this.todo$.getValue();
+        if (modifiedSubtodoParent) {
+            const storedParent = store.find(parent => parent.id === modifiedSubtodoParent.id);
+            const fellowSubtodos = storedParent.tasks;
+            const isAllChecked = fellowSubtodos.every(fellow => fellow.isDone);
+
+            if (isAllChecked) {
+                storedParent.isDone = true;
+            } else {
+                storedParent.isDone = false;
+            }
+            this.save(store);
         }
     }
 
