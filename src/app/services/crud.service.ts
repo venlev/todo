@@ -101,7 +101,7 @@ export class CRUDService {
         });
 
         this.save(currentData);
-        this.refreshChecklist(thisEntry[0]);
+        this.refreshChecklist(thisEntry);
     }
 
     delete(id: number) {
@@ -113,7 +113,6 @@ export class CRUDService {
     }
 
     deleteTask(parent: Card, childID: number) {
-
         const filteredChildren:Task[] = parent.tasks.filter(child => child.id !== childID);
         parent.tasks = filteredChildren;
         const currentData: Card[] = this.todo$.getValue();
