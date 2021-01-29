@@ -8,7 +8,8 @@
     "test": "ng test",
     "test:ci": "ng test --code-coverage --no-watch --no-progress",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "compodoc": "compodoc -p tsconfig.json src"
   },
   "private": true,
   "dependencies": {

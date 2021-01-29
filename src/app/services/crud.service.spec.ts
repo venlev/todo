@@ -1,7 +1,7 @@
 import { CRUDService } from './crud.service';
 import { Card } from '../models/card.model';
 import { Task } from '../models/task.model';
-import { reduce, sample } from 'rxjs/operators';
+import { TestBed } from '@angular/core/testing';
 
 describe('CRUD Service Test', () => {
     /*
@@ -9,83 +9,186 @@ describe('CRUD Service Test', () => {
     * hereby I can make comparisons
     */
 
-    const CRUD = new CRUDService();
-
-    var localDataset: Card[];
-    CRUD.todos.subscribe(data => {
-        localDataset = data;
+    beforeEach(()=>{
+        TestBed.configureTestingModule({
+            providers: [CRUDService]
+        })
     });
 
+    fit('should create a card', async (done) => {
+        //GIVEN
+        const service = TestBed.inject(CRUDService);
+        const expected = [
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: []
+            }),
+            new Card({
+                id: 2,
+                title: 'card2',
+                isDone: false,
+                tasks: []
+            })
+        ];
 
-    it('should create a card', () => {
-        const sampleTitle = 'test data';
-        CRUD.create(sampleTitle);
-        let expected = localDataset.find(data => data.title === sampleTitle);
-        //console.log(expected)
-        expect(expected).toBeTruthy();
-        window.localStorage.clear();
-    });
-    
-    it('should create a task on a card', () => {
-        const sampleCard = 'test data';
-        const sampleTask = {taskName:'sub task'};
-        CRUD.create(sampleCard);
-        let parent = localDataset.find(data => data.title === sampleCard);
-        CRUD.addTask(sampleTask, parent.id);
-
-        let expectedParent = localDataset.find(parents=> parents.title === sampleCard);
-        let expected = expectedParent.tasks.find(tasks=>tasks.name === sampleTask.taskName);
-        //console.log(expectedParent, expected)
-        expect(expected.name).toEqual(sampleTask.taskName);
-        window.localStorage.clear();
-    });
-    
-    it('should generate an Id for next card', () => {
-        const sampleText = 'test data';
-        CRUD.create(sampleText);
-        let OLDMaxID = localDataset.reduce((acc, curr) => {
-            if (curr.id > acc.id) {
-                return curr;
-            }
+        //WHEN
+        service.create('card');
+        service.create('card2')
+        
+        //THEN
+        service.todos.subscribe(data => {
+            expect(data).toEqual(expected);
+            window.localStorage.clear();
+            done()
         });
-        CRUD.create(`${sampleText}2`);
-        let expected = localDataset.find(data => data.title === `${sampleText}2`);
-        //console.log(expected.id, OLDMaxID.id)
-        expect(expected.id).toBeGreaterThan(OLDMaxID.id);
-        window.localStorage.clear();
     });
+/*
+    it('should create a task on a card', () => {
+
+        CRUD.create('card');
+        CRUD.addTask({ taskName: 'task' }, 1);
+        CRUD.addTask({ taskName: 'task2' }, 1);
+        console.log(localDataset);
+        const actual = localDataset;
+        const expected = [
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: [
+                    new Task({
+                        id: 1,
+                        name: 'task',
+                        isDone: false
+                    }),
+
+                    new Task({
+                        id: 2,
+                        name: 'task2',
+                        isDone: false
+                    })
+                ]
+            })
+        ];
+
+        expect(actual).toEqual(expected);
+    });
+
 
     it('should update a card', () => {
-        const mockCard = 'test data';
-        CRUD.create(mockCard);
-        CRUD.update(localDataset.find(data => data.title === mockCard));
-        let expected = localDataset.find(data => data.title === mockCard);
+        CRUD.create('card');
+        CRUD.addTask({ taskName: 'task' }, 1);
+        CRUD.addTask({ taskName: 'task2' }, 1);
+        CRUD.update(
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: [
+                    new Task({
+                        id: 1,
+                        name: 'task',
+                        isDone: false
+                    }),
 
-        //console.log(expected)
-        expect(expected.isDone).toBeTrue();
-        window.localStorage.clear();
+                    new Task({
+                        id: 2,
+                        name: 'task2',
+                        isDone: false
+                    })
+                ]
+            })
+        );
+
+        console.log(localDataset);
+        const actual = localDataset;
+        const expected = [
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: true,
+                tasks: [
+                    new Task({
+                        id: 1,
+                        name: 'task',
+                        isDone: true
+                    }),
+
+                    new Task({
+                        id: 2,
+                        name: 'task2',
+                        isDone: true
+                    })
+                ]
+            })
+        ];
+
+        expect(actual).toEqual(expected);
+
     });
 
     it('should update a task on a card', () => {
-        const mockCard = 'test data';
-        const mockTask = { taskName: 'mock task'}
-        CRUD.create(mockCard);
-        const parentID = localDataset.find(cards=>cards.title === mockCard).id;
-        CRUD.addTask(mockTask, parentID);
-        let parentCard = localDataset.find(cards=>cards.title === mockCard);
-        let testTask = parentCard.tasks.find(data => data.name === mockTask.taskName)
-        CRUD.update(testTask, parentCard);
-        parentCard = localDataset.find(cards=>cards.title === mockCard); // update parent
-        let expected = parentCard.tasks.find(data => data.name === mockTask.taskName);
+        CRUD.create('card');
+        CRUD.addTask({ taskName: 'task' }, 1);
+        CRUD.addTask({ taskName: 'task2' }, 1);
+        CRUD.update(
+            new Task({
+                id: 1,
+                name: 'task',
+                isDone: false
+            }),
 
-        //console.log(expected)
-        expect(expected.isDone).toBeTrue();
-        window.localStorage.clear();
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: [
+                    new Task({
+                        id: 1,
+                        name: 'task',
+                        isDone: false
+                    }),
+
+                    new Task({
+                        id: 2,
+                        name: 'task2',
+                        isDone: false
+                    })
+                ]
+            })
+        );
+
+        console.log(localDataset);
+        const actual = localDataset;
+        const expected = [
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: [
+                    new Task({
+                        id: 1,
+                        name: 'task',
+                        isDone: true
+                    }),
+
+                    new Task({
+                        id: 2,
+                        name: 'task2',
+                        isDone: false
+                    })
+                ]
+            })
+        ];
+
+        expect(actual).toEqual(expected);
     });
- 
 
-    /// többször előfordulnak a kártyák :z
     /*
+    /// többször előfordulnak a kártyák :z
+    
     it('should delete a card', () => {
         const mockData = 'test data';
         CRUD.create(mockData);
@@ -97,9 +200,10 @@ describe('CRUD Service Test', () => {
         console.log(localDataset, expected);
         //console.log(expected)
         expect(expected).toBeFalsy();
-        window.localStorage.clear();
+        
     });
-    */
+    
+ 
     it('should delete a task', () => {
         const mockData = 'test data 123';
         const taskWeWillDelete = {taskName: 'this task we will delete'};
@@ -109,7 +213,7 @@ describe('CRUD Service Test', () => {
         CRUD.addTask({taskName:'taskame two'}, parentTask.id);
         parentTask = localDataset.find(cards => cards.title === mockData); // refresh parent 
         CRUD.deleteTask(parentTask, parentTask.tasks.find(tasks => tasks.name === taskWeWillDelete.taskName).id);
-        //*LOG*/parentTask.tasks.forEach(task=>console.log('task is',task));
+        parentTask.tasks.forEach(task=>console.log('task is',task));
         parentTask = localDataset.find(cards => cards.title === mockData); // refresh parent
         let expected = '';
         parentTask.tasks.forEach(task=>{
@@ -117,9 +221,9 @@ describe('CRUD Service Test', () => {
         });
         //console.log(parentTask, localDataset, expected);
         expect(expected).not.toEqual(taskWeWillDelete.taskName);
-        window.localStorage.clear();
+        
     });
-
-
+ 
+*/
 
 });

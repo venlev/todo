@@ -58,6 +58,7 @@ export class CRUDService {
             const isAllCheckedBefore = originalElement.tasks.every(subTask => subTask.isDone);
             const originalTask = originalElement.tasks.find(tasks=> tasks.id === element.id);
             originalTask.isDone = !originalTask.isDone;
+            
             if (isAllCheckedBefore) {
                 originalElement.isDone = false;    
             }
@@ -83,7 +84,7 @@ export class CRUDService {
     }
 
     addTask({ taskName }, parentID: number) {
-        
+
         const currentData: Card[] = this.todo$.getValue();
         const thisEntry:Card = currentData.find(element => element.id === parentID);
 
@@ -124,7 +125,7 @@ export class CRUDService {
         this.refreshChecklist(parent);
     }
 
-    save(list: Card[]) {
+    private save(list: Card[]) {
         this.set(list);
         if (this.get()) this.todo$.next(this.get());
     }
