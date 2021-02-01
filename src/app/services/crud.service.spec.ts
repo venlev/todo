@@ -9,13 +9,13 @@ describe('CRUD Service Test', () => {
     * hereby I can make comparisons
     */
 
-    beforeEach(()=>{
+    beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [CRUDService]
         })
     });
 
-    fit('should create a card', async (done) => {
+    it('should create a card', async (done) => {
         //GIVEN
         const service = TestBed.inject(CRUDService);
         const expected = [
@@ -36,7 +36,7 @@ describe('CRUD Service Test', () => {
         //WHEN
         service.create('card');
         service.create('card2')
-        
+
         //THEN
         service.todos.subscribe(data => {
             expect(data).toEqual(expected);
@@ -44,14 +44,11 @@ describe('CRUD Service Test', () => {
             done()
         });
     });
-/*
-    it('should create a task on a card', () => {
 
-        CRUD.create('card');
-        CRUD.addTask({ taskName: 'task' }, 1);
-        CRUD.addTask({ taskName: 'task2' }, 1);
-        console.log(localDataset);
-        const actual = localDataset;
+    it('should create a task on a card', async (done) => {
+
+        //GIVEN
+        const service = TestBed.inject(CRUDService);
         const expected = [
             new Card({
                 id: 1,
@@ -73,37 +70,25 @@ describe('CRUD Service Test', () => {
             })
         ];
 
-        expect(actual).toEqual(expected);
+        //WHEN
+        service.create('card');
+        service.addTask({ taskName: 'task' }, 1);
+        service.addTask({ taskName: 'task2' }, 1);
+
+        //THEN
+        service.todos.subscribe(data => {
+            expect(data).toEqual(expected);
+            window.localStorage.clear();
+            done()
+        });
+
     });
 
 
-    it('should update a card', () => {
-        CRUD.create('card');
-        CRUD.addTask({ taskName: 'task' }, 1);
-        CRUD.addTask({ taskName: 'task2' }, 1);
-        CRUD.update(
-            new Card({
-                id: 1,
-                title: 'card',
-                isDone: false,
-                tasks: [
-                    new Task({
-                        id: 1,
-                        name: 'task',
-                        isDone: false
-                    }),
+    it('should update a card', async (done) => {
 
-                    new Task({
-                        id: 2,
-                        name: 'task2',
-                        isDone: false
-                    })
-                ]
-            })
-        );
-
-        console.log(localDataset);
-        const actual = localDataset;
+        // GIVEN
+        const service = TestBed.inject(CRUDService);
         const expected = [
             new Card({
                 id: 1,
@@ -125,15 +110,69 @@ describe('CRUD Service Test', () => {
             })
         ];
 
-        expect(actual).toEqual(expected);
+        // WHEN
+        service.create('card');
+        service.addTask({ taskName: 'task' }, 1);
+        service.addTask({ taskName: 'task2' }, 1);
+        service.update(
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: [
+                    new Task({
+                        id: 1,
+                        name: 'task',
+                        isDone: false
+                    }),
 
+                    new Task({
+                        id: 2,
+                        name: 'task2',
+                        isDone: false
+                    })
+                ]
+            })
+        );
+
+        // THEN
+        service.todos.subscribe(data => {
+            expect(data).toEqual(expected);
+            window.localStorage.clear();
+            done()
+        });
     });
 
-    it('should update a task on a card', () => {
-        CRUD.create('card');
-        CRUD.addTask({ taskName: 'task' }, 1);
-        CRUD.addTask({ taskName: 'task2' }, 1);
-        CRUD.update(
+    it('should update a task on a card', async (done) => {
+
+        // GIVEN
+        const service = TestBed.inject(CRUDService);
+        const expected = [
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: [
+                    new Task({
+                        id: 1,
+                        name: 'task',
+                        isDone: true
+                    }),
+
+                    new Task({
+                        id: 2,
+                        name: 'task2',
+                        isDone: false
+                    })
+                ]
+            })
+        ];
+
+        // WHEN
+        service.create('card');
+        service.addTask({ taskName: 'task' }, 1);
+        service.addTask({ taskName: 'task2' }, 1);
+        service.update(
             new Task({
                 id: 1,
                 name: 'task',
@@ -160,8 +199,51 @@ describe('CRUD Service Test', () => {
             })
         );
 
-        console.log(localDataset);
-        const actual = localDataset;
+        // THEN
+        service.todos.subscribe(data => {
+            expect(data).toEqual(expected);
+            window.localStorage.clear();
+            done()
+        });
+    });
+
+    it('should delete a card', async (done) => {
+        // GIVEN
+        const service = TestBed.inject(CRUDService);
+        const expected = [
+            new Card({
+                id: 1,
+                title: 'card',
+                isDone: false,
+                tasks: []
+            }),
+            new Card({
+                id: 2,
+                title: 'card1',
+                isDone: false,
+                tasks: []
+            }),
+        ];
+
+        // WHEN
+        service.create('card');
+        service.create('card1');
+        service.create('card2');
+        service.delete(3);
+
+        // THEN
+        service.todos.subscribe(data => {
+            expect(data).toEqual(expected);
+            window.localStorage.clear();
+            done()
+        });
+    });
+
+
+    it('should delete a task', async (done) => {
+
+        // GIVEN
+        const service = TestBed.inject(CRUDService);
         const expected = [
             new Card({
                 id: 1,
@@ -171,59 +253,55 @@ describe('CRUD Service Test', () => {
                     new Task({
                         id: 1,
                         name: 'task',
-                        isDone: true
+                        isDone: false
                     }),
 
                     new Task({
                         id: 2,
-                        name: 'task2',
+                        name: 'task1',
                         isDone: false
                     })
                 ]
             })
         ];
 
-        expect(actual).toEqual(expected);
-    });
+        // WHEN
+        service.create('card');
+        service.addTask({ taskName: 'task' }, 1);
+        service.addTask({ taskName: 'task1' }, 1);
+        service.addTask({ taskName: 'task2' }, 1);
 
-    /*
-    /// többször előfordulnak a kártyák :z
-    
-    it('should delete a card', () => {
-        const mockData = 'test data';
-        CRUD.create(mockData);
-        CRUD.create('something to fill up');
-        CRUD.create('another card with random data');
-        let mockCard = localDataset.find(cards => cards.title === mockData)
-        CRUD.delete(mockCard.id);
-        let expected = localDataset.find(data => data.title === mockData);
-        console.log(localDataset, expected);
-        //console.log(expected)
-        expect(expected).toBeFalsy();
-        
-    });
-    
- 
-    it('should delete a task', () => {
-        const mockData = 'test data 123';
-        const taskWeWillDelete = {taskName: 'this task we will delete'};
-        CRUD.create(mockData);
-        let parentTask: Card = localDataset.find(cards => cards.title === mockData);
-        CRUD.addTask(taskWeWillDelete, parentTask.id);
-        CRUD.addTask({taskName:'taskame two'}, parentTask.id);
-        parentTask = localDataset.find(cards => cards.title === mockData); // refresh parent 
-        CRUD.deleteTask(parentTask, parentTask.tasks.find(tasks => tasks.name === taskWeWillDelete.taskName).id);
-        parentTask.tasks.forEach(task=>console.log('task is',task));
-        parentTask = localDataset.find(cards => cards.title === mockData); // refresh parent
-        let expected = '';
-        parentTask.tasks.forEach(task=>{
-            if(task.name === taskWeWillDelete.taskName) expected = task.name;
+        service.deleteTask({
+            id: 1,
+            title: 'card',
+            isDone: false,
+            tasks: [
+                new Task({
+                    id: 1,
+                    name: 'task',
+                    isDone: false
+                }),
+
+                new Task({
+                    id: 2,
+                    name: 'task1',
+                    isDone: false
+                }),
+
+                new Task({
+                    id: 3,
+                    name: 'task2',
+                    isDone: false
+                })
+            ]
+        }, 3);
+
+        // THEN
+        service.todos.subscribe(data => {
+            expect(data).toEqual(expected);
+            window.localStorage.clear();
+            done()
         });
-        //console.log(parentTask, localDataset, expected);
-        expect(expected).not.toEqual(taskWeWillDelete.taskName);
-        
     });
- 
-*/
 
 });
