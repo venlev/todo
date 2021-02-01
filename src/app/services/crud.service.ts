@@ -12,6 +12,10 @@ export class CRUDService {
 
     private todo$: BehaviorSubject<Card[]> = new BehaviorSubject([])
 
+    /**
+     * Observable getter for insternal / external access
+     * of the current dataset 
+     */
     get todos(): Observable<Card[]> {
         return this.todo$.pipe(
             map((cards) => {
@@ -20,12 +24,19 @@ export class CRUDService {
         )
     }
 
+    /**
+     * Initial data upload of the observable
+     */
     init() {
         if (this.get()) {
             this.todo$.next(this.get());
         }
     }
 
+    /**
+     * Creating a parent
+     * @value is the title of the card
+     */
     create(value: string) {
         const targetList: Card[] = this.todo$.getValue();
         let maxId = 0;
@@ -50,6 +61,11 @@ export class CRUDService {
 
     }
 
+    /**
+     * Update checkbox statuses of parent (Card) or children (Tasks)
+     * @element
+     * @parent optional, just if element is task
+     */
     update(element: Task | Card, parent?: Card) {
         let recentElements: Card[] = this.todo$.getValue();
         
