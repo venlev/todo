@@ -145,7 +145,11 @@ export class CRUDService {
         this.set(list);
         if (this.get()) this.todo$.next(this.get());
     }
-
+    
+    /**
+     * 
+     * @param modifiedSubtodoParent 
+     */
     private refreshChecklist(modifiedSubtodoParent: Card) {
         const store: Card[] = this.todo$.getValue();
         if (modifiedSubtodoParent) {
