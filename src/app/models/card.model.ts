@@ -1,5 +1,14 @@
 import {Task} from './task.model';
 
+/**
+ * Card type model
+ * 
+ * this expects every parameter of a card
+ * @id
+ * @title
+ * @isDone
+ * @tasks
+ */
 export class Card{
     id: number;
     title: string;

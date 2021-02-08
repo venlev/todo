@@ -12,6 +12,10 @@ export class CRUDService {
 
     private todo$: BehaviorSubject<Card[]> = new BehaviorSubject([])
 
+    /**
+     * Observable getter for insternal / external access
+     * of the current dataset 
+     */
     get todos(): Observable<Card[]> {
         return this.todo$.pipe(
             map((cards) => {
@@ -20,12 +24,19 @@ export class CRUDService {
         )
     }
 
+    /**
+     * Initial data upload of the observable
+     */
     init() {
         if (this.get()) {
             this.todo$.next(this.get());
         }
     }
 
+    /**
+     * Creating a parent
+     * @value is the title of the card
+     */
     create(value: string) {
         const targetList: Card[] = this.todo$.getValue();
         let maxId = 0;
@@ -50,6 +61,11 @@ export class CRUDService {
 
     }
 
+    /**
+     * Update checkbox statuses of parent (Card) or children (Tasks)
+     * @element
+     * @parent optional, just if element is task
+     */
     update(element: Task | Card, parent?: Card) {
         let recentElements: Card[] = this.todo$.getValue();
         
@@ -58,6 +74,7 @@ export class CRUDService {
             const isAllCheckedBefore = originalElement.tasks.every(subTask => subTask.isDone);
             const originalTask = originalElement.tasks.find(tasks=> tasks.id === element.id);
             originalTask.isDone = !originalTask.isDone;
+            
             if (isAllCheckedBefore) {
                 originalElement.isDone = false;    
             }
@@ -82,7 +99,8 @@ export class CRUDService {
         }
     }
 
-    addTask(taskName: string, parentID: number) {
+    addTask({ taskName }, parentID: number) {
+
         const currentData: Card[] = this.todo$.getValue();
         const thisEntry:Card = currentData.find(element => element.id === parentID);
 
@@ -90,7 +108,7 @@ export class CRUDService {
 
         const newTask: Task = {
             id: newId,
-            name: taskName['taskName'],
+            name: taskName,
             isDone: false,
         }
 
@@ -123,23 +141,22 @@ export class CRUDService {
         this.refreshChecklist(parent);
     }
 
-    save(list: Card[]) {
+    private save(list: Card[]) {
         this.set(list);
         if (this.get()) this.todo$.next(this.get());
     }
-
-    refreshChecklist(modifiedSubtodoParent: Card) {
+    
+    /**
+     * 
+     * @param modifiedSubtodoParent 
+     */
+    private refreshChecklist(modifiedSubtodoParent: Card) {
         const store: Card[] = this.todo$.getValue();
         if (modifiedSubtodoParent) {
             const storedParent = store.find(parent => parent.id === modifiedSubtodoParent.id);
             const fellowSubtodos = storedParent.tasks;
             const isAllChecked = fellowSubtodos.every(fellow => fellow.isDone);
-
-            if (isAllChecked) {
-                storedParent.isDone = true;
-            } else {
-                storedParent.isDone = false;
-            }
+            storedParent.isDone = isAllChecked;
             this.save(store);
         }
     }

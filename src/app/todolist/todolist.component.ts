@@ -34,9 +34,9 @@ export class TodolistComponent implements OnInit {
   }
 
   submit(data) {
+    // data = {  title: 'string' }
     this.CRUD.create(data.title);
     this.createForm.reset()
-    //this.ngOnInit();
   }
 
   submitTask(taskName, parentID) {

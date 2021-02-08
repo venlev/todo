@@ -1,3 +1,11 @@
+/**
+ * Task type model
+ * 
+ * Expects all data to build a task
+ * @id
+ * @name
+ * @isDone
+ */
 export class Task{
     id: number;
     name: string;
